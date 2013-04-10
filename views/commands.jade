@@ -1,0 +1,25 @@
+extends layout
+block content
+  div.row
+    div.span12
+    h1 Spawn Commands
+  div.row
+    div.span12
+      - if (commands.length === 0)
+          p.lead No commands found
+      - else
+          table.table.table-striped.table-bordered
+            tr
+              th Repo
+              th Command
+              th Remove
+            each element in commands
+              tr
+                td #{element.repo}
+                td #{element.command}
+                td
+                  a(href='#').btn.btn-danger Remove
+
+  div.row
+    div.span12
+      a(href='/commands/add').btn.btn-large.btn-success Add New Command

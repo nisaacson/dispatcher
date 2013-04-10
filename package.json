@@ -27,7 +27,8 @@
     "archy": "0.0.2",
     "propagit": "~0.6.4",
     "async": "~0.2.7",
-    "forms-bootstrap": "git://github.com/nisaacson/forms-bootstrap.git"
+    "forms-bootstrap": "git://github.com/nisaacson/forms-bootstrap.git",
+    "required-keys": "~1.0.5"
   },
   "devDependencies": {
     "eyespect": "~0.1.8",

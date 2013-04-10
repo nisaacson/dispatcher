@@ -17,7 +17,11 @@ block content
               tr
                 td #{repo}
                 td
-                  a(href='#').btn Deploy
+                  form(method='post', action='repos/deploy/' + repo)
+                    input(type='submit', value='Deploy').btn
                 td
                   a(href='#').btn.btn-danger Remove
 
+  div.row
+    div.span12
+      a(href='/repos/add').btn.btn-large.btn-success Add Repo

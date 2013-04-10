@@ -23,4 +23,4 @@ block content
                   td #{pid.command}
                   td #{pid.status}
                   td
-                    a.btn Stop
+                    a(href='/ps/stop/' + pid.pid).btn Stop
