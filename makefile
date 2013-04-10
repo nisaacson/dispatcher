@@ -13,6 +13,8 @@ deploy-repo:
 	$(MOCHA) test/deploy-repo-test.js --reporter $(REPORTER)
 perform-add-command:
 	$(MOCHA) test/perform-add-command-test.js --reporter $(REPORTER)
+perform-spawn:
+	$(MOCHA) test/perform-spawn-test.js --reporter $(REPORTER)
 
 stop-pid:
 	$(MOCHA) test/stop-pid-test.js --reporter $(REPORTER)

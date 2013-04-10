@@ -6,6 +6,7 @@ var addRepo = require('./lib/addRepo')
 var deployRepo = require('./lib/deploy')
 var commands = require('./lib/commands')
 var addCommand = require('./lib/addCommand')
+var spawn = require('./lib/spawn')
 module.exports = function (app) {
   app.get('/ping', function (req, res) {
     res.send('pong')
@@ -26,4 +27,5 @@ module.exports = function (app) {
   app.get('/commands', commands)
   app.get('/commands/add', addCommand)
   app.post('/commands/add', addCommand)
+  app.post('/spawn/:id', spawn)
 }

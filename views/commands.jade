@@ -10,13 +10,19 @@ block content
       - else
           table.table.table-striped.table-bordered
             tr
+              th Action
               th Repo
               th Command
+              th Instances
               th Remove
             each element in commands
               tr
+                td
+                  form(method='post', action='spawn/' + element._id, style='margin:0')
+                    input(type='submit', value='spawn').btn.btn-info
                 td #{element.repo}
                 td #{element.command}
+                td #{element.instances}
                 td
                   a(href='#').btn.btn-danger Remove
 

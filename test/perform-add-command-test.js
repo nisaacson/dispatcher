@@ -72,6 +72,7 @@ describe('Peform Add Command', function () {
       should.not.exist(err, 'error adding command: ' + JSON.stringify(err, null, ' '))
       performAddCommand(data, function(err, reply) {
         should.exist(err, 'should give error when adding duplicate command')
+        inspect(err,' error')
         err.error.should.eql('spawn command already exists')
         done()
       })
