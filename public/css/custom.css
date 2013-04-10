@@ -25,3 +25,7 @@ footer {
 .table-borderless th{ 
     border: 0 !important
 }
+
+.wideTextInput {
+  width: 95%
+}
