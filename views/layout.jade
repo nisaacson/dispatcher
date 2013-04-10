@@ -1,0 +1,65 @@
+!!!
+html
+  head
+    title= title
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/static/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/static/css/bootstrap-responsive.min.css')
+    link(rel='stylesheet', href='/static/css/custom.css')
+    script(type='text/javascript', src='/static/js/jquery.min.js')
+    script(type='text/javascript', src='/static/js/bootstrap.min.js')
+
+    style
+      body {
+        padding-top: 60px;
+      }
+
+    block extra_head
+
+  body
+    div#wrap
+      div.navbar.navbar-fixed-top
+        div.navbar-inner
+          div.container
+            - if (locals.email)
+              a(href='/').brand Fleet Dispatcher
+              ul.nav
+               li
+                  a(href='/hub') Hub
+                li
+                  a(href='/drone') Drones
+                li
+                  a(href='/deploy') Deploy
+                li
+              ul.nav.pull-right
+                li
+                  a(href='/logout') Logout
+            - else
+              a(href='/').brand DocParse
+              ul.nav
+                li
+                  a(href='/login') Login
+                li
+                  a(href='/hub') Hub
+      div.container
+        div#alerts_container
+          if locals.success
+            div.alert.alert-success
+              a(href="#", data-dismiss="alert").close
+                | x
+              != locals.success
+          if locals.error
+            div.alert.alert-error
+              a(href="#", data-dismiss="alert").close
+                | x
+              != locals.error
+          if locals.message
+            div.alert.alert-info
+              a(href="#", data-dismiss="alert").close
+                | x
+              != locals.message
+        block content
+      div#push
+    footer
+      div
+        p(style="margin-left:10px") #{locals.brand}

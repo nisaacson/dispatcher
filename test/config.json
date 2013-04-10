@@ -1,0 +1,36 @@
+{
+  "fleet": {
+    "hub": {
+      "host": "localhost",
+      "port": 7000,
+      "secret": "pdexjwSfkzo9PaiWVSy3aMIEiHnuZ"
+    }
+  },
+  "couch": {
+    "host": "localhost",
+    "protocol": "http",
+    "port": 5984,
+    "database": "dispatcher"
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": "6379",
+    "database": "1"
+  },
+
+  "seaport": {
+    "host": "127.0.0.1",
+    "port": 4598
+  },
+
+  "application": {
+    "host": "docparse.com",
+    "port": 80,
+    "portRange": [3000, 3000],
+    "cookieSecret": "foo",
+    "sessionSecret": "bar"
+  },
+  "bcrypt": {
+    "rounds": 1
+  }
+}

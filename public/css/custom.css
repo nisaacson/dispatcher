@@ -1,0 +1,27 @@
+html,
+body {
+    height: 100%;
+}
+ 
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -3em;
+}
+#push,
+#footer {
+    height: 3em;
+}
+footer {
+}
+
+
+.pull-right {
+  float: right !important;
+} 
+
+.table-borderless td,
+.table-borderless th{ 
+    border: 0 !important
+}
