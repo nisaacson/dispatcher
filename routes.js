@@ -7,6 +7,7 @@ var ps = require('./lib/ps')
 var stop = require('./lib/stop')
 var repos = require('./lib/repos')
 var addRepo = require('./lib/addRepo')
+var updateRepo = require('./lib/updateRepo')
 var deployRepo = require('./lib/deploy')
 var commands = require('./lib/commands')
 var addCommand = require('./lib/addCommand')
@@ -60,6 +61,7 @@ module.exports = function (app) {
   app.get('/repos', ensureAuthenticated, repos)
   app.get('/repos/add', ensureAuthenticated, addRepo)
   app.post('/repos/add', ensureAuthenticated, addRepo)
+  app.post('/repos/update/:repo', ensureAuthenticated, updateRepo)
 
   app.post('/repos/deploy/:repo', ensureAuthenticated, deployRepo)
 
