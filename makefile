@@ -9,3 +9,5 @@ get-repo-names:
 	$(MOCHA) test/get-repo-names-test.js --reporter $(REPORTER)
 clone-repo:
 	$(MOCHA) test/clone-repo-test.js --reporter $(REPORTER)
+stop-pid:
+	$(MOCHA) test/stop-pid-test.js --reporter $(REPORTER)
