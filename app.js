@@ -7,6 +7,7 @@ var RedisStore = require('connect-redis')(connect)
 var redis = require('redis')
 var ecstatic = require('ecstatic')
 var routes = require('./routes')
+var auth = require('./lib/auth')
 module.exports = function(data, cb) {
   var port = config.get('portRange')[0]
   var app = express()
@@ -46,13 +47,25 @@ module.exports = function(data, cb) {
       delete req.session.success
       next()
     })
+    app.use(function(req, res, next) {
+      if (req.user && req.user.email) {
+        res.locals.email = req.user.email
+      }
+      else {
+        res.locals.email = undefined
+      }
+      next()
+    })
 
     app.use(ecstatic({
       root: __dirname + '/public',
       baseDir: '/static'
     }))
+
     app.use(app.router)
+    auth()
     routes(app)
+
 
 
     var server = http.createServer(app)

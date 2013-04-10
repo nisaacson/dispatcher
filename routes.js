@@ -1,4 +1,5 @@
 var passport = require('passport')
+var inspect = require('eyespect').inspector();
 var login = require('./routes/login')
 var register = require('./routes/register')
 var hub = require('./lib/hub')
@@ -20,7 +21,6 @@ module.exports = function (app) {
     return res.redirect('/ps')
   })
   app.get('/login', login)
-  app.post('/login', login)
   app.get('/register', register)
   app.post('/login', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
@@ -45,7 +45,6 @@ module.exports = function (app) {
       })
     })(req, res, next)
   })
-
   app.get('/logout', function (req, res) {
     if (!req.user) {
       return res.redirect('/')

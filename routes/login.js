@@ -1,13 +1,16 @@
-module.exports = function(req, res){
-  if (req.user) {
-    return res.redirect('/');
-  }
-  render_login_page(req, res);
 
-};
+var inspect = require('eyespect').inspector()
+module.exports = function(req, res, next){
+  inspect(req.body,'posting to login form')
+  if (req.user) {
+    return res.redirect('/')
+  }
+  return render_login_page(req, res)
+}
+
 // Models
 var forms = require('forms-bootstrap'),
-    fields = forms.fields, validators = forms.validators;
+    fields = forms.fields, validators = forms.validators
 
 function render_login_page(req, res) {
   var login_form = forms.create({
@@ -21,8 +24,8 @@ function render_login_page(req, res) {
       required: true,
       help_text: 'Case sensitive'
     })
-  });
+  })
 
-  var formHTML = login_form.toHTML();
-  res.render('login', { title: 'Login', form: formHTML });
-};
+  var formHTML = login_form.toHTML()
+  res.render('login', { title: 'Login', form: formHTML })
+}
