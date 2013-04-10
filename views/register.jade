@@ -1,0 +1,22 @@
+extends layout
+block content
+  div.row
+    div.span12
+      div(style="padding:20px")
+        h1
+         | DocParse
+  div.row
+    div.span12
+      form(enctype="multipart/form-data", method="post").well.form-horizontal
+        fieldset
+          legend Register new account
+          != form
+        div.form-actions
+          input(type='submit').btn.btn-primary
+        
+  div.row
+    div.span12
+      hr
+      h2 Already have an account?
+      p.lead Click the button below to login to an existing account
+      a(href="/register").btn.btn-success.btn-large Login

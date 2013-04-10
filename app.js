@@ -1,3 +1,4 @@
+var passport = require('passport')
 var http = require('http')
 var express = require('express')
 var config = require('nconf')
@@ -31,6 +32,9 @@ module.exports = function(data, cb) {
       })
     }))
     app.use(express.bodyParser())
+    app.use(passport.initialize())
+    app.use(passport.session())
+
     app.use(function(req, res, next) {
       // Expose "error" and "message" to all views that are rendered.
       res.locals.error = req.session.error || ''

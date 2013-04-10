@@ -24,19 +24,6 @@ html
             - if (locals.email)
               a(href='/').brand Fleet Dispatcher
               ul.nav
-               li
-                  a(href='/hub') Hub
-                li
-                  a(href='/drone') Drones
-                li
-                  a(href='/deploy') Deploy
-                li
-              ul.nav.pull-right
-                li
-                  a(href='/logout') Logout
-            - else
-              a(href='/').brand DocParse
-              ul.nav
                 li
                   a(href='/login') Login
                 li
@@ -49,6 +36,16 @@ html
                   a(href='/commands') Commands
                 li
                   a(href='/commands/add') Add Command
+              ul.nav.pull-right
+                li
+                  a(href='/logout') Logout
+
+            - else
+              a(href='/').brand DocParse Dispatch
+              ul.nav
+               li
+                  a(href='/login') Login
+
 
       div.container
         div#alerts_container
