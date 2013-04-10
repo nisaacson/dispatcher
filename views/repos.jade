@@ -1,0 +1,23 @@
+extends layout
+block content
+  div.row
+    div.span12
+    h1 Your Repos
+  div.row
+    div.span12
+      - if (repos.length === 0)
+          p.lead No repos found
+      - else
+          table.table.table-striped.table-bordered
+            tr
+              th Repo
+              th Deploy
+              th Remove
+            each repo in repos
+              tr
+                td #{repo}
+                td
+                  a(href='#').btn Deploy
+                td
+                  a(href='#').btn.btn-danger Remove
+

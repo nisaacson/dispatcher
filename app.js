@@ -25,6 +25,18 @@ module.exports = function(data, cb) {
     })
   }))
   app.use(express.bodyParser())
+  app.use(function(req, res, next) {
+    // Expose "error" and "message" to all views that are rendered.
+    res.locals.error = req.session.error || ''
+    res.locals.message = req.session.message || ''
+    res.locals.success = req.session.success || ''
+    // Remove them so they're not displayed on subsequent renders.
+    delete req.session.error
+    delete req.session.message
+    delete req.session.success
+    next()
+  })
+
   app.use(ecstatic({
     root: __dirname + '/public',
     baseDir: '/static'

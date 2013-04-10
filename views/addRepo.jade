@@ -1,0 +1,13 @@
+extends layout
+block append extra_head
+block content
+  div.row
+    div.span12
+      h1 Add New Repo
+      p.lead Fill out the fields below to add a new remote repository
+  div.row
+    div.span12.well
+      form(method="post").form-horizontal
+        != form
+        div.form-actions
+          input(type='submit').btn.btn-info

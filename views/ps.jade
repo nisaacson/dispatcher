@@ -1,0 +1,26 @@
+extends layout
+block content
+  div.row
+    div.span12
+    h1 Fleet Processes
+  div.row
+    div.span12
+      each element in drones
+        div.row
+          div.span12
+            h2 Drone: #{element.drone}
+            table.table.table-striped.table-bordered
+              tr
+                th Repo
+                th Pid
+                th Command
+                th Status
+                th Action
+              each pid in element.pids
+                tr
+                  td #{pid.repo}
+                  td #{pid.pid}
+                  td #{pid.command}
+                  td #{pid.status}
+                  td
+                    a.btn Stop

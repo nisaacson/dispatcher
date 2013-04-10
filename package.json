@@ -25,7 +25,9 @@
     "ecstatic": "~0.4.2",
     "jade": "~0.28.2",
     "archy": "0.0.2",
-    "propagit": "~0.6.4"
+    "propagit": "~0.6.4",
+    "async": "~0.2.7",
+    "forms-bootstrap": "git://github.com/nisaacson/forms-bootstrap.git"
   },
   "devDependencies": {
     "eyespect": "~0.1.8",
