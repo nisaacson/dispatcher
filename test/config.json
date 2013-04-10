@@ -25,11 +25,10 @@
 
   "application": {
     "host": "docparse.com",
-    "port": 80,
-    "portRange": [3000, 3000],
     "cookieSecret": "foo",
     "sessionSecret": "bar"
   },
+  "portRange": [3000, 3000],
   "bcrypt": {
     "rounds": 1
   }
