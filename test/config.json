@@ -1,10 +1,8 @@
 {
   "fleet": {
-    "hub": {
-      "host": "localhost",
-      "port": 7000,
-      "secret": "pdexjwSfkzo9PaiWVSy3aMIEiHnuZ"
-    }
+    "host": "localhost",
+    "port": 7000,
+    "secret": "pdexjwSfkzo9PaiWVSy3aMIEiHnuZ"
   },
   "couch": {
     "host": "localhost",

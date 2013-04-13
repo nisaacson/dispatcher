@@ -10,13 +10,12 @@ var getJSON = require('../lib/getJSON')
 describe('Get fleet-ps json', function () {
   it('should get json', function (done) {
     var fleetConfig = config.get('fleet')
-    var host = fleetConfig.hub.host
-    var port = fleetConfig.hub.port
-    var secret = fleetConfig.hub.secret
-
-    var hub = [host, port].join(':')
+    var host = fleetConfig.host
+    var port = fleetConfig.port
+    var secret = fleetConfig.secret
     var data = {
-      hub: hub,
+      port: port,
+      host: host,
       secret: secret
     }
     getJSON(data, function (err, reply) {
