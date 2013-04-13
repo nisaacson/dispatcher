@@ -32,7 +32,8 @@
     "couch-profile": "~1.0.16",
     "bcrypt-nodejs": "0.0.3",
     "passport-local": "~0.1.6",
-    "passport": "~0.1.16"
+    "passport": "~0.1.16",
+    "rimraf": "~2.1.4"
   },
   "devDependencies": {
     "eyespect": "~0.1.8",
