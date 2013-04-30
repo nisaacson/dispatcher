@@ -13,10 +13,9 @@ describe('Get fleet-ps json', function () {
     var host = fleetConfig.hub.host
     var port = fleetConfig.hub.port
     var secret = fleetConfig.hub.secret
-
-    var hub = [host, port].join(':')
     var data = {
-      hub: hub,
+      port: port,
+      host: host,
       secret: secret
     }
     getJSON(data, function (err, reply) {

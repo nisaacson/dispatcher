@@ -1,19 +1,27 @@
 var passport = require('passport')
 var inspect = require('eyespect').inspector();
-var login = require('./routes/login')
-var register = require('./routes/register')
-var hub = require('./lib/hub')
-var ps = require('./lib/ps')
-var stop = require('./lib/stop')
-var repos = require('./lib/repos')
-var addRepo = require('./lib/addRepo')
-var updateRepo = require('./lib/updateRepo')
-var deployRepo = require('./lib/deploy')
-var commands = require('./lib/commands')
-var addCommand = require('./lib/addCommand')
-var spawn = require('./lib/spawn')
-var ensureAuthenticated = require('./lib/ensureAuthenticated')
-module.exports = function (app) {
+var login = require('./login')
+
+var hub = require('./hub')
+var ps = require('./ps')
+var stop = require('../lib/stop')
+var repos = require('../lib/repos')
+var addRepo = require('../lib/addRepo')
+var deployRepo = require('../lib/deploy')
+var commands = require('../lib/commands')
+var addCommand = require('../lib/addCommand')
+var spawn = require('../lib/spawn')
+var ensureAuthenticated = require('../lib/ensureAuthenticated')
+var rk = require('required-keys');
+var should = require('should');
+module.exports = function (data) {
+  var keys = ['app', 'db', 'account']
+  var err = rk.truthySync(data, keys)
+  should.not.exist(err, 'error setting up routes, missing key in data: ' + JSON.stringify(err, null, ' '))
+  var app = data.app
+  var db = data.db
+  var account = data.account
+  var register = require('./register')(account)
   app.get('/ping', function (req, res) {
     res.send('pong')
   })
@@ -23,6 +31,7 @@ module.exports = function (app) {
   })
   app.get('/login', login)
   app.get('/register', register)
+  app.post('/register', register)
   app.post('/login', function(req, res, next) {
     passport.authenticate('local', function(err, user, info) {
       if (err) {
@@ -61,10 +70,7 @@ module.exports = function (app) {
   app.get('/repos', ensureAuthenticated, repos)
   app.get('/repos/add', ensureAuthenticated, addRepo)
   app.post('/repos/add', ensureAuthenticated, addRepo)
-  app.post('/repos/update/:repo', ensureAuthenticated, updateRepo)
-
   app.post('/repos/deploy/:repo', ensureAuthenticated, deployRepo)
-
   app.get('/commands', ensureAuthenticated, commands)
   app.get('/commands/add', ensureAuthenticated, addCommand)
   app.post('/commands/add', ensureAuthenticated, addCommand)

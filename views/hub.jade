@@ -5,4 +5,9 @@ block content
     h1 Fleet Hub
   div.row
     div.span12
-      p Hub details here
+      form(enctype="multipart/form-data", method="post").well.form-horizontal
+        fieldset
+          legend Data
+          != form
+        div.form-actions
+          input(type='submit').btn.btn-info

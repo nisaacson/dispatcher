@@ -13,7 +13,8 @@ var appLib = require('./app')
 logger.debug('starting fleet dispatcher server')
 
 var data = {
-  config: config
+  config: config,
+  db: db
 };
 appLib(data, function (err, reply) {
   logger.debug('fleet dispatcher server online', {

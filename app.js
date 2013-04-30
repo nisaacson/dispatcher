@@ -1,21 +1,36 @@
+var inspect = require('eyespect').inspector();
 var passport = require('passport')
 var http = require('http')
 var express = require('express')
-var config = require('nconf')
 var connect = require('connect')
 var RedisStore = require('connect-redis')(connect)
 var redis = require('redis')
 var ecstatic = require('ecstatic')
-var routes = require('./routes')
+var routes = require('./routes/setup')
 var auth = require('./lib/auth')
+var rk = require('required-keys');
+var AccountLogger = require('account-logger')
+var AccountCouch = require('account-couch')
+var logger = require('loggly-console-logger')
 module.exports = function(data, cb) {
+  var keys = ['config', 'db']
+  var err = rk.truthySync(data, keys)
+  if (err) {
+    return cb({
+      message: 'error starting dispatch app, missing key in data',
+      error: err,
+      stack: new Error().stack
+    })
+  }
+  var config = data.config
   var port = config.get('portRange')[0]
+  var db = data.db
   var app = express()
   var cookieSecret = config.get('application:cookieSecret')
   var sessionSecret = config.get('application:sessionSecret')
   var redisConfig = config.get('redis')
   var redisSessionClient = redis.createClient(redisConfig.port, redisConfig.host, {})
-  authenticateRedis(redisSessionClient, function (err) {
+  authenticateRedis(redisSessionClient, redisConfig, function (err) {
     if (err) {
       return cb({
         message: 'failed to start dispatch server, error authenticating redis client',
@@ -61,10 +76,18 @@ module.exports = function(data, cb) {
       root: __dirname + '/public',
       baseDir: '/static'
     }))
-
+    var accountCouch = new AccountCouch(db)
+    var account = new AccountLogger(accountCouch, logger)
     app.use(app.router)
-    auth()
-    routes(app)
+    auth(account)
+
+
+    var routesData = {
+      db: db,
+      app: app,
+      account: account
+    }
+    routes(routesData)
 
 
 
@@ -79,8 +102,7 @@ module.exports = function(data, cb) {
   })
 }
 
-function authenticateRedis(client, cb) {
-  var redisConfig = config.get('redis')
+function authenticateRedis(client, redisConfig, cb) {
   var password = redisConfig.password
   if (!password) {
     return cb()

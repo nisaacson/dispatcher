@@ -11,15 +11,11 @@ block content
           table.table.table-striped.table-bordered
             tr
               th Repo
-              th Update
               th Deploy
               th Remove
             each repo in repos
               tr
                 td #{repo}
-                td
-                  form(method='post', action='repos/update/' + repo, style='margin:0')
-                    input(type='submit', value='Update').btn
                 td
                   form(method='post', action='repos/deploy/' + repo, style='margin:0')
                     input(type='submit', value='Deploy').btn

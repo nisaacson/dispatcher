@@ -1,7 +1,6 @@
 
 var inspect = require('eyespect').inspector()
 module.exports = function(req, res, next){
-  inspect(req.body,'posting to login form')
   if (req.user) {
     return res.redirect('/')
   }
