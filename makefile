@@ -23,3 +23,7 @@ perform-update-repo:
 
 stop-pid:
 	$(MOCHA) test/stop-pid-test.js --reporter $(REPORTER)
+setup-hub:
+	$(MOCHA) test/setup-hub-test.js --reporter $(REPORTER)
+setup-drone:
+	$(MOCHA) test/setup-drone-test.js --reporter $(REPORTER)
