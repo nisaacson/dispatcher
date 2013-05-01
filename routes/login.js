@@ -1,30 +1,44 @@
-
+var passport = require('passport')
 var inspect = require('eyespect').inspector()
+var renderLoginPage = require('./renderLoginPage')
 module.exports = function(req, res, next){
+  inspect('login route called')
   if (req.user) {
     return res.redirect('/')
   }
-  return render_login_page(req, res)
-}
+  var method = req.method.toLowerCase()
+  inspect(method, 'login route method')
+  if (method !== 'post') {
+    return renderLoginPage(req, res)
+  }
+  // inspect('posting to login page')
+  // var authFunction = passport.authenticate('local', function(err, user, info) {
+  //   if (err) {
+  //     inspect(err, 'login error')
+  //     req.session.error = 'Error performing login, please try again later'
+  //     return res.redirect('/')
+  //   }
+  //   if (!user) {
+  //     // *** Display message using Express 3 locals
+  //     var message = 'Login Failed'
+  //     inspect(message, 'login message')
+  //     if (info && info.message) {
+  //       message = info.message
+  //     }
+  //     req.session.message = message
+  //     return
+  //     return res.redirect('/login')
+  //   }
+  //   req.logIn(user, function(err) {
+  //     if (err) {
+  //       return next(err)
+  //     }
+  //     req.session.password = req.body.password
+  //     return
+  //     return res.redirect('/')
+  //   })
+  // })
 
-// Models
-var forms = require('forms-bootstrap'),
-    fields = forms.fields, validators = forms.validators
-
-function render_login_page(req, res) {
-  var login_form = forms.create({
-    email: fields.string({
-      label: "Email",
-      required: true,
-      help_text: 'Enter your email address here'
-    }),
-    password: fields.password({
-      label: "password",
-      required: true,
-      help_text: 'Case sensitive'
-    })
-  })
-
-  var formHTML = login_form.toHTML()
-  res.render('login', { title: 'Login', form: formHTML })
+  // inspect(authFunction.toString(), 'authFunction')
+  // authFunction(req, res, next)
 }

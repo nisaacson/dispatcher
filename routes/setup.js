@@ -27,12 +27,18 @@ module.exports = function (data) {
   })
 
   app.get('/', function (req, res) {
+    inspect('loading root url /')
     return res.redirect('/ps')
   })
   app.get('/login', login)
+  // app.post('/login', login)
   app.get('/register', register)
   app.post('/register', register)
   app.post('/login', function(req, res, next) {
+    if (!req.body || ! req.body.email) {
+      return res.redirect('/')
+    }
+    inspect('start local auth')
     passport.authenticate('local', function(err, user, info) {
       if (err) {
         return next(err)
@@ -40,6 +46,7 @@ module.exports = function (data) {
       if (!user) {
         // *** Display message using Express 3 locals
         var message = 'Login Failed'
+        inspect(message, 'login failed')
         if (info && info.message) {
           message = info.message
         }

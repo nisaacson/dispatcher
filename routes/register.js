@@ -1,5 +1,6 @@
-var inspect = require('eyespect').inspector({maxLength:10820})
+var inspect = require('eyespect').inspector();
 var path = require('path')
+var renderLoginPage = require('./renderLoginPage')
 // Models
 var forms = require('forms-bootstrap'),
     fields = forms.fields, validators = forms.validators
@@ -9,7 +10,6 @@ function renderPage(req, res, form) {
 }
 
 function confirmUniqueEmail(data, cb) {
-  inspect('checking if email is unique')
   var logger = data.logger
   var findData = {
     email: data.email,
@@ -27,14 +27,12 @@ function confirmUniqueEmail(data, cb) {
       return cb(error)
     }
     if (profile) {
-      inspect(profile,'profile taken')
       logger.info('user tried to register email which is already taken', {
         type: 'web',
         email: data.email
       })
       return cb('Error, that email is already taken. Please select a different one')
     }
-    inspect('email is unique')
     cb()
   })
 }
@@ -96,9 +94,7 @@ function handleSuccess(req, res, form, account) {
     email: email,
     password: password
   }
-  inspect(account,'account')
   account.register(profileData, function (err, profile) {
-    inspect('done creating user')
     if (err) {
       logger.error('error during user registration', {
         role: 'dispatch',
@@ -108,8 +104,7 @@ function handleSuccess(req, res, form, account) {
       req.session.error = 'An error occurred during registration, please try again later'
       return res.redirect('/register')
     }
-    req.session.success = 'Your registration was sucessful. Please login now'
-    res.redirect('/login')
-    return
+    res.locals.success = 'Your registration was sucessful. Please login now'
+    return renderLoginPage(req, res)
   })
 }

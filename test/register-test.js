@@ -1,3 +1,4 @@
+var path = require('path')
 require('./startTestServer')
 var cheerio = require('cheerio')
 var async = require('async')
@@ -12,6 +13,8 @@ var db = require('cradle-nconf')(config)
 var port = config.get('portRange')[0]
 var request = require('request')
 describe('Register', function () {
+  this.timeout('10s')
+  this.slow('5s')
   var data = {
     email: 'user1@example.com',
     password: 'password1',
@@ -26,10 +29,8 @@ describe('Register', function () {
   }
   it('should register new user correctly', function (done) {
     var email = data.email
-    inspect('removing existing users')
     removeForEmail(email, function (err) {
       should.not.exist(err)
-      inspect('existing users removed')
       var jar = request.jar()
       var url = 'http://127.0.0.1:' + port + '/register'
       var opts = {
@@ -44,14 +45,39 @@ describe('Register', function () {
       }
       request(opts, function (err, res, body) {
         should.not.exist(err)
-        res.statusCode.should.eql(200)
         var $ = cheerio.load(body)
         var html = $.html('html')
-        inspect(html,'html')
-        done()
+        var filePath = path.join(__dirname, 'data/dump/loginPage.html')
+        fs.writeFileSync(filePath,body)
+        inspect(filePath, 'filePath')
+        var div = $('.alert-success')
+        div.length.should.eql(1, 'success alert not found')
+        var text = div.text().trim()
+        text.should.eql('xYour registration was sucessful. Please login now')
+        var url = 'http://127.0.0.1:' + port + '/login'
+        var form = {
+            email: email,
+            password: data.password
+          }
+        var opts = {
+          form: form,
+          jar: jar,
+          method: 'post',
+          url: url
+        }
+        inspect(opts,'opts')
+        inspect(form,'form')
+        request(opts, function (err, res, body) {
+          should.not.exist(err)
+          var $ = cheerio.load(body)
+          var html = $.html('html')
+          inspect(html,'html')
+          done()
+        })
       })
     })
   })
+
   it('should give error when registering user with same email')
 })
 

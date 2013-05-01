@@ -79,6 +79,10 @@ module.exports = function(data, cb) {
     var accountCouch = new AccountCouch(db)
     var account = new AccountLogger(accountCouch, logger)
     app.use(app.router)
+    app.configure('development', function(){
+      app.use(express.errorHandler());
+      app.locals.pretty = true;
+    })
     auth(account)
 
 
