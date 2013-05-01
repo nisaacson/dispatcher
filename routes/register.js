@@ -69,7 +69,7 @@ module.exports = function(account) {
       },
       other: function (form) {
         console.log('form other called')
-        renderPage(form, req, res)
+        renderPage(req, res, form)
       },
       error: function(form) {
         req.session.error = 'Please correct the errors below'
@@ -77,7 +77,7 @@ module.exports = function(account) {
         form.fields.password_field.value = ''
         form.fields.password_confirm_field.data = ''
         form.fields.password_confirm_field.value = ''
-        renderPage(form, req, res)
+        renderPage(req, res, form)
       }
     })
   }
@@ -86,7 +86,6 @@ module.exports = function(account) {
 
 function handleSuccess(req, res, form, account) {
   // make a new user
-  var logger = req.logger
   var db = req.db
   var email = form.fields.email_field.data
   var password = form.fields.password_field.data
@@ -96,15 +95,13 @@ function handleSuccess(req, res, form, account) {
   }
   account.register(profileData, function (err, profile) {
     if (err) {
-      logger.error('error during user registration', {
-        role: 'dispatch',
-        error: err,
-        stack: new Error().stack
-      })
       req.session.error = 'An error occurred during registration, please try again later'
+      if (err.message === 'register failed, email is not unique') {
+        req.session.error = 'Email address is already registered, please enter a different one'
+      }
       return res.redirect('/register')
     }
-    res.locals.success = 'Your registration was sucessful. Please login now'
-    return renderLoginPage(req, res)
+    req.session.success = 'Your registration was sucessful. Please login now'
+    return res.redirect('/login')
   })
 }

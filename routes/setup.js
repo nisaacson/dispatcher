@@ -31,37 +31,37 @@ module.exports = function (data) {
     return res.redirect('/ps')
   })
   app.get('/login', login)
-  // app.post('/login', login)
+  app.post('/login', login)
   app.get('/register', register)
   app.post('/register', register)
-  app.post('/login', function(req, res, next) {
-    if (!req.body || ! req.body.email) {
-      return res.redirect('/')
-    }
-    inspect('start local auth')
-    passport.authenticate('local', function(err, user, info) {
-      if (err) {
-        return next(err)
-      }
-      if (!user) {
-        // *** Display message using Express 3 locals
-        var message = 'Login Failed'
-        inspect(message, 'login failed')
-        if (info && info.message) {
-          message = info.message
-        }
-        req.session.message = message
-        return res.redirect('/login')
-      }
-      req.logIn(user, function(err) {
-        if (err) {
-          return next(err)
-        }
-        req.session.password = req.body.password
-        return res.redirect('/')
-      })
-    })(req, res, next)
-  })
+  // app.post('/login', function(req, res, next) {
+  //   if (!req.body || ! req.body.email) {
+  //     return res.redirect('/')
+  //   }
+  //   inspect('start local auth')
+  //   passport.authenticate('local', function(err, user, info) {
+  //     if (err) {
+  //       return next(err)
+  //     }
+  //     if (!user) {
+  //       // *** Display message using Express 3 locals
+  //       var message = 'Login Failed'
+  //       inspect(message, 'login failed')
+  //       if (info && info.message) {
+  //         message = info.message
+  //       }
+  //       req.session.message = message
+  //       return res.redirect('/login')
+  //     }
+  //     req.logIn(user, function(err) {
+  //       if (err) {
+  //         return next(err)
+  //       }
+  //       req.session.password = req.body.password
+  //       return res.redirect('/')
+  //     })
+  //   })(req, res, next)
+  // })
   app.get('/logout', function (req, res) {
     if (!req.user) {
       return res.redirect('/')

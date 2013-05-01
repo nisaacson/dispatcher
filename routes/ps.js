@@ -1,11 +1,12 @@
 var inspect = require('eyespect').inspector();
 var getJSON = require('../lib/getJSON')
+var logger = require('loggly-console-logger')
 var config = require('nconf')
 module.exports = function (req, res) {
   var fleetConfig = config.get('fleet')
-  var host = fleetConfig.hub.host
-  var port = fleetConfig.hub.port
-  var secret = fleetConfig.hub.secret
+  var host = fleetConfig.host
+  var port = fleetConfig.port
+  var secret = fleetConfig.secret
   var data = {
     port: port,
     host: host,
@@ -14,9 +15,13 @@ module.exports = function (req, res) {
   getJSON(data, function (err, reply) {
     if (err) {
       req.session.error = 'Error getting ps data from fleet'
+      logger.error('error getting json ps data from fleet', {
+        error: err,
+        role: 'dispatch',
+        section: 'getJSON'
+      })
       return res.redirect('/')
     }
-
     var droneKeys = Object.keys(reply).sort(function (a, b) {
       return a.localeCompare(b)
     })
@@ -29,6 +34,7 @@ module.exports = function (req, res) {
       }
       return output
     })
+    inspect('rendering ps page')
     res.render('ps', { title: 'fleet ps', drones: drones})
   })
 }

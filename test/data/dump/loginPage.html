@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        padding-top: 60px;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div id="wrap">
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container"><a href="/" class="brand">DocParse Dispatch</a>
+            <ul class="nav">
+              <li><a href="/login">Login</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div id="alerts_container">
+          <div class="alert alert-success"><a href="#" data-dismiss="alert" class="close">x</a>Your registration was sucessful. Please login now
+          </div>
+        </div>
+        <div class="row">
+          <div class="span12">
+            <div style="padding:20px">
+              <h1>DocParse Dispatch</h1>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span12">
+            <form action="/login" method="post" class="well form-horizontal">
+              <fieldset>
+                <legend>Login</legend><div class="control-group"><label class="control-label" for="id_email">Email</label><div class="controls"><input type="text" name="email" id="id_email" /><span class="help-inline">Enter your email address here</span></div></div><div class="control-group"><label class="control-label" for="id_password">password</label><div class="controls"><input type="password" name="password" id="id_password" /><span class="help-inline">Case sensitive</span></div></div>
+              </fieldset>
+              <div class="form-actions">
+                <input type="submit" class="btn btn-success">
+              </div>
+            </form>
+            <hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="span12">
+            <p class="lead">No account? Register for one now</p><a href="/register" class="btn btn btn-large">Register new account</a>
+          </div>
+        </div>
+      </div>
+      <div id="push"></div>
+    </div>
+    <footer>
+      <div>
+        <p style="margin-left:10px"></p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -40,6 +40,7 @@ module.exports = function(data, cb) {
     }
     app.set('views', __dirname + '/views')
     app.set('view engine', 'jade')
+    app.use(express.favicon());
     app.use(express.cookieParser(cookieSecret))
     app.use(connect.session({
       store: new RedisStore({
@@ -50,7 +51,6 @@ module.exports = function(data, cb) {
     app.use(express.bodyParser())
     app.use(passport.initialize())
     app.use(passport.session())
-
     app.use(function(req, res, next) {
       // Expose "error" and "message" to all views that are rendered.
       res.locals.error = req.session.error || ''
@@ -62,6 +62,7 @@ module.exports = function(data, cb) {
       delete req.session.success
       next()
     })
+
     app.use(function(req, res, next) {
       if (req.user && req.user.email) {
         res.locals.email = req.user.email
@@ -72,27 +73,33 @@ module.exports = function(data, cb) {
       next()
     })
 
-    app.use(ecstatic({
-      root: __dirname + '/public',
-      baseDir: '/static'
-    }))
     var accountCouch = new AccountCouch(db)
     var account = new AccountLogger(accountCouch, logger)
     app.use(app.router)
+    app.use('/static', express.static(__dirname + '/public'));
     app.configure('development', function(){
       app.use(express.errorHandler());
       app.locals.pretty = true;
     })
     auth(account)
-
-
+    function handleErrors(err, req, res, next) {
+      inspect('handling error')
+      inspect(err, 'error')
+      logger.error('dispatch web error', {
+        role: 'dispatch',
+        error: err,
+        statusCode: err.status,
+        headers: req.headers,
+        url: req.url
+      })
+      res.send('This is your custom error page.');
+    }
     var routesData = {
       db: db,
       app: app,
       account: account
     }
     routes(routesData)
-
 
 
     var server = http.createServer(app)

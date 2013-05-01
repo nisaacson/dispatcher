@@ -14,7 +14,6 @@
   "license": "BSD",
   "readmeFilename": "README.md",
   "dependencies": {
-    "express": "~3.1.1",
     "optimist": "~0.3.7",
     "nconf": "~0.6.7",
     "loggly-console-logger": "~1.0.5",
@@ -32,9 +31,10 @@
     "bcrypt-nodejs": "0.0.3",
     "passport-local": "~0.1.6",
     "passport": "~0.1.16",
-    "account-couch": "0.0.2",
-    "account-logger": "0.0.4",
-    "forms-bootstrap": "0.0.6"
+    "forms-bootstrap": "0.0.6",
+    "account-logger": "~1.0.1",
+    "account-couch": "~1.0.0",
+    "express": "~3.2.1"
   },
   "devDependencies": {
     "eyespect": "~0.1.8",
