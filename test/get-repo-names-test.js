@@ -3,7 +3,8 @@ var should = require('should');
 var fs = require('fs')
 var path = require('path')
 var assert = require('assert')
-var configFilePath = path.join(__dirname,'config.json')
+var argv = require('optimist').demand('config').argv
+var configFilePath = argv.config
 assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
 var config = require('nconf').env().argv().file({file: configFilePath})
 var getRepoNames = require('../lib/getRepoNames')

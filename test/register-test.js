@@ -79,7 +79,7 @@ describe('Register', function () {
       })
     })
   })
-  it.only('should give error when registering user with same email', function (done) {
+  it('should give error when registering user with same email', function (done) {
     var email = data.email
     removeForEmail(email, function (err) {
       should.not.exist(err)
