@@ -1,0 +1,8 @@
+{
+  "couch": {
+    "host": "localhost",
+    "database": "account_couch_test",
+    "port": 5984,
+    "protocol": "http"
+  }
+}
