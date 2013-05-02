@@ -1,8 +1,6 @@
 {
   "fleet": {
-    "host": "localhost",
-    "port": 8111,
-    "secret": "foo_secret"
+    "host": "localhost"
   },
   "couch": {
     "host": "localhost",

@@ -8,14 +8,36 @@ var configFilePath = argv.config
 assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
 var config = require('nconf').env().argv().file({file: configFilePath})
 
-
+var portFinder = require('portfinder')
 var deployRepo = require('../lib/deployRepo')
 var startHub = require('./setup/fleet/startHub')
 var startDrone = require('./setup/fleet/startDrone')
 describe('Deploy Repo', function () {
-  before(function () {
-    var hubProcess = startHub({config: config})
-    var droneProcess = startDrone({config: config})
+  var hubProcess, droneProcess
+  before(function (done) {
+    portFinder.getPort(function (err, port) {
+      should.not.exist(err, 'error getting random port: ' + JSON.stringify(err, null, ' '))
+      var data = {
+        host: 'localhost',
+        port: port,
+        secret: 'foo_secret'
+      }
+      config.set('fleet:port', data.port)
+      config.set('fleet:secret', data.secret)
+      hubProcess = startHub(data)
+      droneProcess = startDrone(data)
+      droneProcess.stdout.on('data', function (data) {
+        inspect(data, 'drone data')
+        if (data.trim() === 'connected to the hub') {
+          done()
+        }
+      })
+    })
+  })
+
+  after(function () {
+    hubProcess.kill()
+    droneProcess.kill()
   })
   it('should deploy repo', function (done) {
     this.timeout(0)

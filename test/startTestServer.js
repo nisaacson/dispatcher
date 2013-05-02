@@ -9,31 +9,17 @@ var configFilePath = argv.config
 assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
 var config = require('nconf').env().argv().file({ file: configFilePath})
 var app = require('../app')
-var server
-before(function (done) {
-  this.timeout('50s')
+module.exports = function (data, cb) {
   var logger = require('loggly-console-logger')
   var db = require('cradle-nconf')(config)
-  var data = {
+  inspect(data.authWare, 'authWare')
+  var params = {
     config: config,
     logger: logger,
     db: db,
-    role: 'web'
+    authWare: data.authWare,
+    role: 'dispatch'
   }
   inspect('starting test server')
-  app(data, function (err, reply) {
-    inspect('test server started')
-    if (err) { return done(err) }
-    server = reply.server
-    var output = {
-      server: reply.server,
-      port: reply.port,
-      db: db
-    }
-    inspect('web server setup complete')
-    done()
-  })
-})
-after(function () {
-  server.close()
-})
+  app(params, cb)
+}

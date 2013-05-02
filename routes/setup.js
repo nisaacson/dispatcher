@@ -5,8 +5,8 @@ var login = require('./login')
 var hub = require('./hub')
 var ps = require('./ps')
 var stop = require('../lib/stop')
-var repos = require('../lib/repos')
-var addRepo = require('../lib/addRepo')
+var repos = require('./repos')
+var addRepo = require('./addRepo')
 var deployRepo = require('../lib/deploy')
 var commands = require('../lib/commands')
 var addCommand = require('../lib/addCommand')
@@ -18,6 +18,7 @@ module.exports = function (data) {
   var keys = ['app', 'db', 'account']
   var err = rk.truthySync(data, keys)
   should.not.exist(err, 'error setting up routes, missing key in data: ' + JSON.stringify(err, null, ' '))
+  var authWare = data.authWare || ensureAuthenticated
   var app = data.app
   var db = data.db
   var account = data.account
@@ -27,8 +28,7 @@ module.exports = function (data) {
   })
 
   app.get('/', function (req, res) {
-    inspect('loading root url /')
-    return res.redirect('/ps')
+    return res.redirect('/repos')
   })
   app.get('/login', login)
   app.post('/login', login)
@@ -72,14 +72,19 @@ module.exports = function (data) {
   })
 
   app.get('/hub', hub)
-  app.get('/ps', ensureAuthenticated, ps)
-  app.get('/ps/stop/:pid', ensureAuthenticated, stop)
-  app.get('/repos', ensureAuthenticated, repos)
-  app.get('/repos/add', ensureAuthenticated, addRepo)
-  app.post('/repos/add', ensureAuthenticated, addRepo)
-  app.post('/repos/deploy/:repo', ensureAuthenticated, deployRepo)
-  app.get('/commands', ensureAuthenticated, commands)
-  app.get('/commands/add', ensureAuthenticated, addCommand)
-  app.post('/commands/add', ensureAuthenticated, addCommand)
-  app.post('/spawn/:id', ensureAuthenticated, spawn)
+  app.get('/ps', authWare, ps)
+  app.get('/ps/stop/:pid', authWare, stop)
+
+  // repos
+  app.get('/repos', authWare, repos)
+  app.post('/repos', authWare, repos)
+  app.get('/repos/add', authWare, addRepo)
+  app.post('/repos/add', authWare, addRepo)
+  app.post('/repos/deploy/:repo', authWare, deployRepo)
+
+  // commands
+  app.get('/commands', authWare, commands)
+  app.get('/commands/add', authWare, addCommand)
+  app.post('/commands/add', authWare, addCommand)
+  app.post('/spawn/:id', authWare, spawn)
 }

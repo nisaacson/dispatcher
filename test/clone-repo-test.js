@@ -1,25 +1,54 @@
+var cheerio = require('cheerio')
+var request = require('request')
 var rimraf = require('rimraf')
 var inspect = require('eyespect').inspector();
 var should = require('should');
 var fs = require('fs')
 var path = require('path')
-var assert = require('assert')
-var argv = require('optimist').demand('config').argv
-var configFilePath = argv.config
-assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
-var config = require('nconf').env().argv().file({file: configFilePath})
-var cloneRepo = require('../lib/cloneRepo')
-
+var startTestServer = require('./startTestServer')
 var repo = 'apples'
-describe('Clone Repo', function () {
-  it('should clone repo', function (done) {
+describe('Add Repo', function () {
+  var port, server
+  before(function (done) {
+    var serverData = {
+      authWare: function (req, res, next) {
+        next()
+      }
+    }
+    startTestServer(serverData, function (err, reply) {
+      should.not.exist(err, 'error staring server: ' + JSON.stringify(err, null, ' '))
+      server = reply.server
+      port = reply.port
+      done()
+    })
+  })
+  after(function () {
+    if (server) {
+      server.close()
+    }
+  })
+
+  it('should add repo', function (done) {
     this.timeout(0)
     removeExistingRepo(function (err) {
       should.not.exist(err)
-      var repoDir = path.join(__dirname,'setup/repos/apples.git')
-      cloneRepo(repoDir, function(err, reply) {
-        should.not.exist(err, 'error cloning repo: ' + JSON.stringify(err, null, ' '))
-        inspect('repo cloned correctly')
+      var repoURL = path.join(__dirname,'setup/repos/apples.git')
+      var url = 'http://localhost:' + port + '/repos/add'
+      var opts = {
+        method: 'post',
+        form: {
+          url: repoURL
+        },
+        url: url
+      }
+      request(opts, function (err, res, body) {
+        should.not.exist(err, 'error adding repo: ' + JSON.stringify(err, null, ' '))
+        res.statusCode.should.eql(200)
+        var outputPath = path.join(__dirname, 'data/dump/addPage.html')
+        fs.writeFileSync(outputPath, body)
+        var $ = cheerio.load(body)
+        var alert =$('.alert-success')
+        alert.length.should.eql(1)
         done()
       })
     })

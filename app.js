@@ -97,7 +97,8 @@ module.exports = function(data, cb) {
     var routesData = {
       db: db,
       app: app,
-      account: account
+      account: account,
+      authWare: data.authWare
     }
     routes(routesData)
 

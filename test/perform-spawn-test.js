@@ -12,18 +12,29 @@ var db = require('cradle-nconf')(config)
 var startHub = require('./setup/fleet/startHub')
 var startDrone = require('./setup/fleet/startDrone')
 var performSpawn = require('../lib/performSpawn')
+var portFinder = require('portfinder')
 describe('Perform Spawn ', function () {
   this.timeout('10s')
   this.slow('5s')
   var hubProcess, droneProcess
   before(function (done) {
-    hubProcess = startHub({config: config})
-    droneProcess = startDrone({config: config})
-    droneProcess.stdout.on('data', function (data) {
-      inspect(data, 'drone data')
-      if (data.trim() === 'connected to the hub') {
-        done()
+    portFinder.getPort(function (err, port) {
+      should.not.exist(err, 'error getting random port: ' + JSON.stringify(err, null, ' '))
+      var data = {
+        host: 'localhost',
+        port: port,
+        secret: 'foo_secret'
       }
+      config.set('fleet:port', data.port)
+      config.set('fleet:secret', data.secret)
+      hubProcess = startHub(data)
+      droneProcess = startDrone(data)
+      droneProcess.stdout.on('data', function (data) {
+        inspect(data, 'drone data')
+        if (data.trim() === 'connected to the hub') {
+          done()
+        }
+      })
     })
   })
 

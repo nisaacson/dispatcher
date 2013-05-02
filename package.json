@@ -35,13 +35,16 @@
     "account-logger": "~1.0.1",
     "account-couch": "~1.0.0",
     "express": "~3.2.1",
-    "rimraf": "~2.1.4"
+    "rimraf": "~2.1.4",
+    "dispatch-clone": "~1.0.1",
+    "dispatch-spawn": "~1.0.1"
   },
   "devDependencies": {
     "eyespect": "~0.1.8",
     "should": "~1.2.2",
     "mocha": "~1.9.0",
     "cheerio": "~0.11.0",
-    "request": "~2.21.0"
+    "request": "~2.21.0",
+    "portfinder": "~0.2.1"
   }
 }
