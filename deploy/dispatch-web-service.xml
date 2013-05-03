@@ -15,7 +15,7 @@
       <service_fmri value="svc:/system/filesystem/local"/>
     </dependency>
 
-    <method_context working_directory="/home/node/apps/dispatch/deploy/disptach">
+    <method_context working_directory="/home/node/apps/dispatch/deploy/dispatch">
       <method_credential user="node" group="other" privileges='basic,net_privaddr'  />
       <method_environment>
         <envvar name="PATH" value="/home/node/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin"/>
