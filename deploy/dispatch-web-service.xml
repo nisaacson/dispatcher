@@ -16,7 +16,7 @@
     </dependency>
 
     <method_context working_directory="/home/node/apps/dispatch/deploy/disptach">
-      <method_credential user="node" group="staff" privileges='basic,net_privaddr'  />
+      <method_credential user="node" group="other" privileges='basic,net_privaddr'  />
       <method_environment>
         <envvar name="PATH" value="/home/node/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin"/>
         <envvar name="HOME" value="/home/node"/>
@@ -49,7 +49,7 @@
 
     <template>
       <common_name>
-        <loctext xml:lang="C">node.js startDispatch.sj</loctext>
+        <loctext xml:lang="C">node startDispatch.js</loctext>
       </common_name>
     </template>
 
