@@ -21,8 +21,8 @@ perform-spawn:
 perform-update-repo:
 	$(MOCHA) test/perform-update-repo-test.js --config $(config) --reporter $(REPORTER)
 
-stop-pid:
-	$(MOCHA) test/stop-pid-test.js --config $(config) --reporter $(REPORTER)
+stop:
+	$(MOCHA) test/stop-test.js --config $(config) --reporter $(REPORTER)
 setup-hub:
 	$(MOCHA) test/setup-hub-test.js --config $(config) --reporter $(REPORTER)
 setup-drone:

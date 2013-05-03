@@ -34,7 +34,6 @@ module.exports = function (req, res) {
       }
       return output
     })
-    inspect('rendering ps page')
     res.render('ps', { title: 'fleet ps', drones: drones})
   })
 }

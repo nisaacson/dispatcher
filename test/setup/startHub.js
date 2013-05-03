@@ -16,6 +16,7 @@ var startHub = function startHub(data) {
   // pipe all stdio to the parent process
   var opts = {}
   var child = spawn(cmd, args, opts)
+  inspect(cmd,'fleet hub command')
   child.stdout.setEncoding('utf8')
   child.stderr.setEncoding('utf8')
   child.on('error', function (err) {

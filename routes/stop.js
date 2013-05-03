@@ -1,10 +1,14 @@
 var async = require('async')
-var inspect = require('eyespect').inspector()
 var stopPID = require('../lib/stopPID')
 var config = require('nconf')
 var logger = require('loggly-console-logger')
 module.exports = function (req, res) {
   var pid = req.params.pid
+  logger.info('stop pid route called', {
+    role: 'dispatch',
+    section: 'stop',
+    pid: pid
+  })
   if (!pid) {
     req.session.error = 'no pid specified'
     return res.redirect('/ps')
@@ -28,7 +32,6 @@ module.exports = function (req, res) {
     pid: pid
   })
   stopPID(data, function (err, reply) {
-    inspect(err, 'pid stopped with error')
     if (err) {
       logger.error('stop pid failed', {
         role: 'dispatch',
@@ -40,7 +43,7 @@ module.exports = function (req, res) {
       req.session.error = 'error stopping pid: ' + JSON.stringify(err, null, ' ')
       return res.redirect('/ps')
     }
-    req.session.success = 'correctly stopped pid : ' + pid + ', ' + JSON.stringify(reply, null, ' ')
+    req.session.success = 'correctly stopped pid: ' + pid
     logger.info('stop pid stopped correctly', {
       role: 'dispatch',
       section: 'stop',

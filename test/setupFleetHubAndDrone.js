@@ -19,7 +19,8 @@ module.exports = function (config, cb) {
     var hubProcess = startHub(data)
     var droneProcess = startDrone(data)
     droneProcess.stdout.on('data', function (data) {
-      inspect(data, 'drone data')
+      inspect('drone stdout')
+      console.log(data)
       if (data.trim() === 'connected to the hub') {
         var output = {
           host: host,
