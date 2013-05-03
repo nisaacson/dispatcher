@@ -18,13 +18,18 @@ var data = {
   db: db
 };
 
+var install = require('./spinup-install')
 var rebuild = require('spinup-rebuild')
-rebuild(function (err, reply) {
-  should.not.exist(err, 'error rebuilding node modules: ' + JSON.stringify(err, null, ' '))
-  appLib(data, function (err, reply) {
-    should.not.exist(err, 'error staring dispatch web service: ' + JSON.stringify(err, null, ' '))
-    logger.debug('fleet dispatcher server online', {
-      port: reply.port
+
+install(function (err, reply) {
+  should.not.exist(err, 'error installing node modules: ' + JSON.stringify(err, null, ' '))
+  rebuild(function (err, reply) {
+    should.not.exist(err, 'error rebuilding node modules: ' + JSON.stringify(err, null, ' '))
+    appLib(data, function (err, reply) {
+      should.not.exist(err, 'error staring dispatch web service: ' + JSON.stringify(err, null, ' '))
+      logger.debug('fleet dispatcher server online', {
+        port: reply.port
+      })
     })
   })
 })
