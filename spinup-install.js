@@ -1,5 +1,7 @@
+var inspect = require('eyespect').inspector();
 var spawn = require('child_process').spawn
 module.exports = function (cb) {
+  inspect('installing deps')
   var child = spawn('npm', ['install', '--production'], { stdio: 'inherit' })
   child.on('exit', function (code) {
     if (code !== 0) {
