@@ -1,3 +1,4 @@
+var should = require('should');
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
@@ -16,8 +17,14 @@ var data = {
   config: config,
   db: db
 };
-appLib(data, function (err, reply) {
-  logger.debug('fleet dispatcher server online', {
-    port: reply.port
+
+var rebuild = require('rebuild')
+rebuild(function (err, reply) {
+  should.not.exist(err, 'error rebuilding node modules: ' + JSON.stringify(err, null, ' '))
+  appLib(data, function (err, reply) {
+    should.not.exist(err, 'error staring dispatch web service: ' + JSON.stringify(err, null, ' '))
+    logger.debug('fleet dispatcher server online', {
+      port: reply.port
+    })
   })
 })
