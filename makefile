@@ -10,8 +10,8 @@ get-json:
 	$(MOCHA) test/get-json-test.js --config $(config) --reporter $(REPORTER)
 get-repo-names:
 	$(MOCHA) test/get-repo-names-test.js --config $(config) --reporter $(REPORTER)
-clone-repo:
-	$(MOCHA) test/clone-repo-test.js --config $(config) --reporter $(REPORTER)
+add-repo:
+	$(MOCHA) test/add-repo-test.js --config $(config) --reporter $(REPORTER)
 deploy-repo:
 	$(MOCHA) test/deploy-repo-test.js --config $(config) --reporter $(REPORTER)
 add-command:

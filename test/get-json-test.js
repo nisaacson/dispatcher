@@ -15,25 +15,15 @@ var startHub = require('./setup/fleet/startHub')
 var startDrone = require('./setup/fleet/startDrone')
 
 var getJSON = require('../lib/getJSON')
+var setupFleetHubAndDrone = require('./setupFleetHubAndDrone')
 describe('Get fleet-ps json', function () {
   var hubProcess, droneProcess
   before(function (done) {
-    portFinder.getPort(function (err, port) {
-      should.not.exist(err, 'error getting random port: ' + JSON.stringify(err, null, ' '))
-      var data = {
-        host: 'localhost',
-        port: port,
-        secret: 'foo_secret'
-      }
-      config.set('fleet:port', data.port)
-      config.set('fleet:secret', data.secret)
-      hubProcess = startHub(data)
-      droneProcess = startDrone(data)
-      droneProcess.stdout.on('data', function (data) {
-        if (data.trim() === 'connected to the hub') {
-          done()
-        }
-      })
+    setupFleetHubAndDrone(config, function (err, reply) {
+      should.not.exist(err)
+      hubProcess = reply.hubProcess
+      droneProcess = reply.droneProcess
+      done()
     })
   })
 

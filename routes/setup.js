@@ -3,7 +3,7 @@ var login = require('./login')
 
 var hub = require('./hub')
 var ps = require('./ps')
-var stop = require('../lib/stop')
+var stop = require('./stop')
 var repos = require('./repos')
 var addRepo = require('./addRepo')
 var deploy = require('./deploy')

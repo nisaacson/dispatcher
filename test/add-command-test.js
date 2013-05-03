@@ -12,8 +12,6 @@ var configFilePath = argv.config
 assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
 var config = require('nconf').env().argv().file({ file: configFilePath})
 
-
-
 var db = require('cradle-nconf')(config)
 var portFinder = require('portfinder')
 var setupFleetHubAndDrone = require('./setupFleetHubAndDrone')
