@@ -9,7 +9,7 @@ var repos = require('./repos')
 var addRepo = require('./addRepo')
 var deployRepo = require('../lib/deploy')
 var commands = require('../lib/commands')
-var addCommand = require('../lib/addCommand')
+var addCommand = require('./addCommand')
 var spawn = require('../lib/spawn')
 var ensureAuthenticated = require('../lib/ensureAuthenticated')
 var rk = require('required-keys');
@@ -34,34 +34,6 @@ module.exports = function (data) {
   app.post('/login', login)
   app.get('/register', register)
   app.post('/register', register)
-  // app.post('/login', function(req, res, next) {
-  //   if (!req.body || ! req.body.email) {
-  //     return res.redirect('/')
-  //   }
-  //   inspect('start local auth')
-  //   passport.authenticate('local', function(err, user, info) {
-  //     if (err) {
-  //       return next(err)
-  //     }
-  //     if (!user) {
-  //       // *** Display message using Express 3 locals
-  //       var message = 'Login Failed'
-  //       inspect(message, 'login failed')
-  //       if (info && info.message) {
-  //         message = info.message
-  //       }
-  //       req.session.message = message
-  //       return res.redirect('/login')
-  //     }
-  //     req.logIn(user, function(err) {
-  //       if (err) {
-  //         return next(err)
-  //       }
-  //       req.session.password = req.body.password
-  //       return res.redirect('/')
-  //     })
-  //   })(req, res, next)
-  // })
   app.get('/logout', function (req, res) {
     if (!req.user) {
       return res.redirect('/')
@@ -84,7 +56,10 @@ module.exports = function (data) {
 
   // commands
   app.get('/commands', authWare, commands)
+  app.post('/commands', authWare, commands)
   app.get('/commands/add', authWare, addCommand)
   app.post('/commands/add', authWare, addCommand)
+
+  // spawn
   app.post('/spawn/:id', authWare, spawn)
 }

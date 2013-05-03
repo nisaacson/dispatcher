@@ -1,35 +1,46 @@
-var inspect = require('eyespect').inspector();
 var forms = require('forms-bootstrap'),
     fields = forms.fields,
     validators = forms.validators,
     widgets = forms.widgets;
 
 var config = require('nconf')
-var getRepoNames = require('./getRepoNames')
-var getJSON = require('./getJSON')
-var performAddCommand = require('./performAddCommand')
+var db = require('cradle-nconf')(config)
+var logger = require('loggly-console-logger')
+var getRepoNames = require('../lib/getRepoNames')
+var getJSON = require('../lib/getJSON')
+var performAdd = require('dispatch-add-command')
 module.exports = function (req, res) {
   var fleetConfig = config.get('fleet')
   var host = fleetConfig.host
   var port = fleetConfig.port
   var secret = fleetConfig.secret
-  var hub = [host, port].join(':')
   var data = {
     host: host,
     port: port,
     secret: secret
   }
-
   getJSON(data, function (err, json) {
     if (err) {
+      logger.error('error adding new command, failed to get drone names from fleet ps json', {
+        role: 'dispatch',
+        addData: data,
+        error: err,
+        section: 'addCommand'
+      })
       req.session.error = 'Error getting drone names, please try again later'
-      return res.redirect('/ps')
+      return res.redirect('/repos')
     }
     var drones = Object.keys(json).sort(function (a, b) { return a.localeCompare(b) })
     drones.unshift('')
     getRepoNames(function (err, repoNames) {
       repoNames.unshift('')
       if (err) {
+        logger.error('error adding new command, failed to get list of repo names', {
+          role: 'dispatch',
+          addData: data,
+          error: err,
+          section: 'addCommand'
+        })
         req.session.error = 'Error getting repos, please try again later'
         return res.redirect('/ps')
       }
@@ -39,7 +50,6 @@ module.exports = function (req, res) {
           widget: widgets.select(),
           validators: [
             function (form, field, cb) {
-              inspect(field,'field')
               if (field.value === '0') {
                 return cb('You need to select a repo');
               }
@@ -53,14 +63,7 @@ module.exports = function (req, res) {
           label: "Drone",
           widget: widgets.select(),
           choices: drones,
-          validators: [
-            function (form, field, cb) {
-              if (field.value === '0') {
-                return cb('You need to select a drone');
-              }
-              cb()
-            }
-          ],
+          help_text: 'leave blank to spawn on any random drone',
           required: true
         }),
 
@@ -89,14 +92,13 @@ module.exports = function (req, res) {
       })
 
       var formHTML = addForm.toHTML()
-      if (req.method.toLowerCase() !== 'post') {
+      var method = req.method.toLowerCase()
+      if (method !== 'post') {
         res.render('addCommand', {title: 'Add New Command', form: formHTML})
         return
       }
-
       addForm.handle(req, {
         error: function (form) {
-          inspect('handling error')
           var formHTML = form.toHTML()
           res.render('addCommand', {title: 'Add New Command', form: formHTML})
         },
@@ -115,17 +117,35 @@ module.exports = function (req, res) {
             instances: instances,
             drone: drone
           }
-          inspect(data, 'adding command')
-          performAddCommand(data, function (err, reply) {
-            if (!err) {
-              req.session.success = 'Command added correctly'
-              return res.redirect('/commands')
-            }
-            else {
+          logger.info('adding new command', {
+            role: 'dispatch',
+            addData: data,
+            section: 'addCommand'
+          })
+          data.db = db
+          performAdd(data, function (err, reply) {
+            if (err) {
               delete err.stack
               req.session.error = 'Error adding command: ' + err
+              logger.error('add new command failed', {
+                role: 'dispatch',
+                addData: data,
+                error: err,
+                section: 'addCommand'
+              })
+              res.locals.error = 'Please correct the errors below'
               res.render('addCommand', {title: 'Add New Command', form: formHTML})
+              return res.redirect('/commands')
             }
+            delete data.db
+            logger.info('add new command completed correctly', {
+              role: 'dispatch',
+              addData: data,
+              section: 'addCommand'
+            })
+            req.session.success = 'Command added correctly'
+            return res.redirect('/commands')
+
           })
         }
       })

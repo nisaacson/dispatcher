@@ -14,8 +14,8 @@ clone-repo:
 	$(MOCHA) test/clone-repo-test.js --config $(config) --reporter $(REPORTER)
 deploy-repo:
 	$(MOCHA) test/deploy-repo-test.js --config $(config) --reporter $(REPORTER)
-perform-add-command:
-	$(MOCHA) test/perform-add-command-test.js --config $(config) --reporter $(REPORTER)
+add-command:
+	$(MOCHA) test/add-command-test.js --config $(config) --reporter $(REPORTER)
 perform-spawn:
 	$(MOCHA) test/perform-spawn-test.js --config $(config) --reporter $(REPORTER)
 perform-update-repo:

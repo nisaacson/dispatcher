@@ -1,59 +1,66 @@
-var async = require('async')
+var cheerio = require('cheerio')
+var request = require('request')
+var rimraf = require('rimraf')
 var inspect = require('eyespect').inspector();
 var should = require('should');
 var fs = require('fs')
 var path = require('path')
-var assert = require('assert')
-var argv = require('optimist').demand('config').argv
-var configFilePath = argv.config
-assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
-var config = require('nconf').env().argv().file({file: configFilePath})
-var db = require('cradle-nconf')(config)
-var startHub = require('./setup/fleet/startHub')
-var startDrone = require('./setup/fleet/startDrone')
-var performSpawn = require('../lib/performSpawn')
-var portFinder = require('portfinder')
-describe('Perform Spawn ', function () {
-  this.timeout('10s')
-  this.slow('5s')
-  var hubProcess, droneProcess
-  before(function (done) {
-    portFinder.getPort(function (err, port) {
-      should.not.exist(err, 'error getting random port: ' + JSON.stringify(err, null, ' '))
-      var data = {
-        host: 'localhost',
-        port: port,
-        secret: 'foo_secret'
-      }
-      config.set('fleet:port', data.port)
-      config.set('fleet:secret', data.secret)
-      hubProcess = startHub(data)
-      droneProcess = startDrone(data)
-      droneProcess.stdout.on('data', function (data) {
-        inspect(data, 'drone data')
-        if (data.trim() === 'connected to the hub') {
-          done()
-        }
-      })
-    })
-  })
-
+var startTestServer = require('./startTestServer')
+var repo = 'apples'
+describe('Add Repo', function () {
+  var port, server
   after(function () {
-    hubProcess.kill()
-    droneProcess.kill()
+    if (server) {
+      server.close()
+    }
   })
-
-  it('should spawn command', function (done) {
-    inspect('spawning command now')
-    db.view('spawn_command/all', {include_docs: true}, function (err, res) {
-      should.not.exist(err,'error finding spawn command')
-      res.length.should.be.above(0, 'no spawn command found')
-      var spawnCommand = res[0].doc
-      performSpawn(spawnCommand, function (err, reply) {
-        should.not.exist(err, 'error performing spawn: ' + JSON.stringify(err, null, ' '))
-        inspect(reply, 'perform spawn')
-        done()
+  before(function (done) {
+    var serverData = {
+      authWare: function (req, res, next) {
+        next()
+      }
+    }
+    startTestServer(serverData, function (err, reply) {
+      should.not.exist(err, 'error staring server: ' + JSON.stringify(err, null, ' '))
+      server = reply.server
+      port = reply.port
+      removeExistingRepo(function (err) {
+        should.not.exist(err)
+        var repoURL = path.join(__dirname,'setup/repos/apples.git')
+        var url = 'http://localhost:' + port + '/repos/add'
+        var opts = {
+          method: 'post',
+          form: {
+            url: repoURL
+          },
+          url: url
+        }
+        request(opts, function (err, res, body) {
+          should.not.exist(err, 'error adding repo: ' + JSON.stringify(err, null, ' '))
+          res.statusCode.should.eql(200)
+          var outputPath = path.join(__dirname, 'data/dump/addPage.html')
+          fs.writeFileSync(outputPath, body)
+          var $ = cheerio.load(body)
+          var alert =$('.alert-success')
+          alert.length.should.eql(1)
+          done()
+        })
       })
     })
+  })
+
+  it('should spawn command', function () {
+
   })
 })
+
+function removeExistingRepo(cb) {
+  var dir = path.join(__dirname,'../repos/apples')
+  inspect(dir,'dir')
+
+  var exists = fs.existsSync(dir)
+  if (!exists) {
+    return cb()
+  }
+  rimraf(dir, cb)
+}
