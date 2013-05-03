@@ -18,7 +18,7 @@ var data = {
   db: db
 };
 
-var rebuild = require('rebuild')
+var rebuild = require('spinup-rebuild')
 rebuild(function (err, reply) {
   should.not.exist(err, 'error rebuilding node modules: ' + JSON.stringify(err, null, ' '))
   appLib(data, function (err, reply) {
