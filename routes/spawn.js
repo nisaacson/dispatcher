@@ -32,6 +32,7 @@ module.exports = function (req, res) {
       port: fleetConfig.port,
       secret: fleetConfig.secret,
       command: spawnCommand.command,
+      drone: spawnCommand.drone,
       repoDir: repoDir
 
     }
