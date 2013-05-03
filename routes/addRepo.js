@@ -1,4 +1,3 @@
-var inspect = require('eyespect').inspector();
 var path = require('path')
 var forms = require('forms-bootstrap'),
     fields = forms.fields,
@@ -26,7 +25,6 @@ module.exports = function (req, res) {
 
   addForm.handle(req, {
     error: function (form) {
-      inspect('form error')
       res.locals.error = 'Please correct the errors below'
       var formHTML = form.toHTML()
       res.render('addRepo', {title: 'Add New Repo', form: formHTML, query: ''})

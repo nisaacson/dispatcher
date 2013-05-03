@@ -1,5 +1,4 @@
 var passport = require('passport')
-var inspect = require('eyespect').inspector();
 var login = require('./login')
 
 var hub = require('./hub')
@@ -7,7 +6,7 @@ var ps = require('./ps')
 var stop = require('../lib/stop')
 var repos = require('./repos')
 var addRepo = require('./addRepo')
-var deployRepo = require('../lib/deploy')
+var deploy = require('./deploy')
 var commands = require('../lib/commands')
 var addCommand = require('./addCommand')
 var spawn = require('../lib/spawn')
@@ -52,7 +51,7 @@ module.exports = function (data) {
   app.post('/repos', authWare, repos)
   app.get('/repos/add', authWare, addRepo)
   app.post('/repos/add', authWare, addRepo)
-  app.post('/repos/deploy/:repo', authWare, deployRepo)
+  app.post('/repos/deploy/:repo', authWare, deploy)
 
   // commands
   app.get('/commands', authWare, commands)

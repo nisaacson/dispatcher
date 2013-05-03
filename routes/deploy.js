@@ -1,5 +1,5 @@
-var deployRepo = require('./deployRepo')
-var performUpdateRepo = require('./performUpdateRepo')
+var performUpdateRepo = require('../lib/performUpdateRepo')
+var deployRepo = require('../lib/performDeploy')
 module.exports = function (req, res) {
   var repo = req.params.repo
   performUpdateRepo(repo, function (err, reply) {

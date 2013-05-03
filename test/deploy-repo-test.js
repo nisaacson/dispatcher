@@ -1,51 +1,95 @@
+var assert = require('assert')
+var cheerio = require('cheerio')
+var request = require('request')
+var rimraf = require('rimraf')
 var inspect = require('eyespect').inspector();
 var should = require('should');
 var fs = require('fs')
 var path = require('path')
-var assert = require('assert')
-var argv = require('optimist').demand('config').argv
+var argv = require('optimist').demand(['config']).argv
 var configFilePath = argv.config
 assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + configFilePath)
-var config = require('nconf').env().argv().file({file: configFilePath})
+var config = require('nconf').env().argv().file({ file: configFilePath})
 
-var portFinder = require('portfinder')
-var deployRepo = require('../lib/deployRepo')
-var startHub = require('./setup/fleet/startHub')
-var startDrone = require('./setup/fleet/startDrone')
+var startTestServer = require('./startTestServer')
+var setupFleetHubAndDrone = require('./setupFleetHubAndDrone')
+var repo = 'apples'
 describe('Deploy Repo', function () {
+  var port, server
   var hubProcess, droneProcess
-  before(function (done) {
-    portFinder.getPort(function (err, port) {
-      should.not.exist(err, 'error getting random port: ' + JSON.stringify(err, null, ' '))
-      var data = {
-        host: 'localhost',
-        port: port,
-        secret: 'foo_secret'
-      }
-      config.set('fleet:port', data.port)
-      config.set('fleet:secret', data.secret)
-      hubProcess = startHub(data)
-      droneProcess = startDrone(data)
-      droneProcess.stdout.on('data', function (data) {
-        inspect(data, 'drone data')
-        if (data.trim() === 'connected to the hub') {
-          done()
-        }
-      })
-    })
-  })
-
   after(function () {
     hubProcess.kill()
     droneProcess.kill()
   })
-  it('should deploy repo', function (done) {
+
+  before(function (done) {
     this.timeout(0)
-    var repo = 'apples'
-    deployRepo(repo, function(err, reply) {
-      should.not.exist(err, 'error cloning repo: ' + JSON.stringify(err, null, ' '))
-      inspect(reply, 'deploy reply')
+    var serverData = {
+      authWare: function (req, res, next) {
+        next()
+      }
+    }
+    setupFleetHubAndDrone(config, function (err, reply) {
+      should.not.exist(err)
+      hubProcess = reply.hubProcess
+      droneProcess = reply.droneProcess
+      startTestServer(serverData, function (err, reply) {
+        should.not.exist(err, 'error staring server: ' + JSON.stringify(err, null, ' '))
+        server = reply.server
+        port = reply.port
+
+        removeExistingRepo(function (err) {
+          should.not.exist(err)
+          var repoURL = path.join(__dirname,'setup/repos/apples.git')
+          var url = 'http://localhost:' + port + '/repos/add'
+          var opts = {
+            method: 'post',
+            form: {
+              url: repoURL
+            },
+            url: url
+          }
+          request(opts, function (err, res, body) {
+            should.not.exist(err, 'error adding repo: ' + JSON.stringify(err, null, ' '))
+            res.statusCode.should.eql(200)
+            var outputPath = path.join(__dirname, 'data/dump/addPage.html')
+            fs.writeFileSync(outputPath, body)
+            var $ = cheerio.load(body)
+            var alert =$('.alert-success')
+            alert.length.should.eql(1)
+            done()
+          })
+        })
+      })
+    })
+  })
+
+  it('should deploy repo', function (done) {
+    var url = 'http://localhost:' + port + '/repos/deploy/apples'
+    var opts = {
+      method: 'post',
+      url: url
+    }
+    request(opts, function (err, res, body) {
+      should.not.exist(err, 'error deploying repo: ' + JSON.stringify(err, null, ' '))
+      res.statusCode.should.eql(200)
+      var outputPath = path.join(__dirname, 'data/dump/deployPage.html')
+      fs.writeFileSync(outputPath, body)
+      var $ = cheerio.load(body)
+      var alert =$('.alert-success')
+      alert.length.should.eql(1)
       done()
     })
   })
 })
+
+function removeExistingRepo(cb) {
+  var dir = path.join(__dirname,'../repos/apples')
+  inspect(dir,'dir')
+
+  var exists = fs.existsSync(dir)
+  if (!exists) {
+    return cb()
+  }
+  rimraf(dir, cb)
+}

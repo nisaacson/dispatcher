@@ -1,4 +1,3 @@
-var inspect = require('eyespect').inspector();
 var passport = require('passport')
 var http = require('http')
 var express = require('express')
@@ -83,8 +82,6 @@ module.exports = function(data, cb) {
     })
     auth(account)
     function handleErrors(err, req, res, next) {
-      inspect('handling error')
-      inspect(err, 'error')
       logger.error('dispatch web error', {
         role: 'dispatch',
         error: err,

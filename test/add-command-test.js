@@ -16,14 +16,13 @@ var config = require('nconf').env().argv().file({ file: configFilePath})
 
 var db = require('cradle-nconf')(config)
 var portFinder = require('portfinder')
-var startHub = require('./setup/startHub')
-var startDrone = require('./setup/startDrone')
+var setupFleetHubAndDrone = require('./setupFleetHubAndDrone')
 var repo = 'apples'
-var hubProcess, droneProcess
 describe('Add Repo', function () {
   var port, server, serverPort
   var host = 'localhost'
   var secret= 'foo_secret'
+  var hubProcess, droneProcess
   after(function () {
     if (server) {
       server.close()
@@ -39,26 +38,13 @@ describe('Add Repo', function () {
       should.not.exist(err, 'error staring server: ' + JSON.stringify(err, null, ' '))
       server = reply.server
       serverPort = reply.port
-      removeExistingCommands(db, function (err, reply) {
-        portFinder.getPort(function (err, reply) {
-          port = reply
-          should.not.exist(err, 'error getting random port: ' + JSON.stringify(err, null, ' '))
-          var data = {
-            host: host,
-            port: port,
-            secret: secret
-          }
-          config.set('fleet:port', port)
-          config.set('fleet:host', host)
-          config.set('fleet:secret', secret)
-          hubProcess = startHub(data)
-          droneProcess = startDrone(data)
-          droneProcess.stdout.on('data', function (data) {
-            inspect(data, 'drone data')
-            if (data.trim() === 'connected to the hub') {
-              done()
-            }
-          })
+      removeExistingCommands(db, function (err) {
+        should.not.exist(err)
+        setupFleetHubAndDrone(config, function (err, reply) {
+          should.not.exist(err)
+          hubProcess = reply.hubProcess
+          droneProcess = reply.droneProcess
+          done()
         })
       })
     })
