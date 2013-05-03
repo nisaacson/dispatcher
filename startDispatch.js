@@ -20,6 +20,7 @@ var data = {
 
 var install = require('./spinup-install')
 var rebuild = require('spinup-rebuild')
+process.chdir(__dirname)
 install(function (err, reply) {
   should.not.exist(err, 'error installing node modules: ' + JSON.stringify(err, null, ' '))
   rebuild(function (err, reply) {
