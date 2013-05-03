@@ -22,6 +22,9 @@ module.exports = function (req, res) {
   logger.info('stop pid begin', {
     role: 'dispatch',
     section: 'stop',
+    host: host,
+    port: port,
+    secret: '*****',
     pid: pid
   })
   stopPID(data, function (err, reply) {
@@ -41,6 +44,9 @@ module.exports = function (req, res) {
     logger.info('stop pid stopped correctly', {
       role: 'dispatch',
       section: 'stop',
+      host: host,
+      port: port,
+      secret: '*****',
       pid: pid
     })
     return res.redirect('/ps')
