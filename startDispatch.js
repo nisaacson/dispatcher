@@ -1,3 +1,5 @@
+var inspect = require('eyespect').inspector();
+inspect('starting dispatch web server')
 var should = require('should');
 var assert = require('assert');
 var fs = require('fs');
@@ -10,17 +12,15 @@ assert.ok(fs.existsSync(configFilePath), 'config file not found at path: ' + con
 var config = nconf.argv().env().file({file: configFilePath});
 var logger = require('loggly-console-logger')
 var db = require('cradle-nconf')(config)
-
-logger.debug('starting fleet dispatcher server')
-
 var data = {
   config: config,
   db: db
-};
+}
 
 var install = require('./spinup-install')
 var rebuild = require('spinup-rebuild')
-process.chdir(__dirname)
+var serverPath = path.join(__dirname)
+process.chdir(serverPath)
 install(function (err, reply) {
   should.not.exist(err, 'error installing node modules: ' + JSON.stringify(err, null, ' '))
   rebuild(function (err, reply) {
