@@ -37,7 +37,7 @@
     "express": "~3.2.1",
     "rimraf": "~2.1.4",
     "dispatch-clone": "~1.0.1",
-    "dispatch-spawn": "~1.0.1",
+    "dispatch-spawn": "~1.0.2",
     "dispatch-add-command": "~1.0.1",
     "spinup-rebuild": "~1.0.0"
   },

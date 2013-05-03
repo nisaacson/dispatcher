@@ -36,14 +36,14 @@ module.exports = function performSpawn(data, cb) {
       '--secret', secret,
       '-- ', command
     ]
-    cmd = 'fleet-spawn --hub=' + hub + ' --secret=' + secret + ' -- ' + command
+    cmd = 'fleet-spawn --hub=' + hub + ' --secret=' + secret
     if (data.drone) {
-      var droneArg = '--drone=' + data.drone
-      args.push(droneArg)
+      var droneArg = ' --drone=' + data.drone
+      cmd += droneArg
     }
-    inspect(cmd, 'cmd')
-    args = []
-    exec(cmd, args, function (err, stdout, stderr) {
+
+    cmd += ' -- ' + command
+    exec(cmd, function (err, stdout, stderr) {
       if (err) {
         return cb({
           message: 'perform spawn failed',
