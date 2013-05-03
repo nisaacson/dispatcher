@@ -18,7 +18,7 @@
     <method_context working_directory="/home/node/apps/dispatch/deploy/disptach">
       <method_credential user="node" group="staff" privileges='basic,net_privaddr'  />
       <method_environment>
-        <envvar name="PATH" value="/home/node/local/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin"/>
+        <envvar name="PATH" value="/home/node/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/usr/sbin:/bin"/>
         <envvar name="HOME" value="/home/node"/>
       </method_environment>
     </method_context>
