@@ -19,14 +19,17 @@ module.exports = function (req, res) {
     include_docs: true
   }
   db.view('spawn_command/all', opts, function (err, reply) {
-    inspect(reply, 'spawn commands')
     var commands = reply.map(function (e) {
       e.host = host
       e.port = port
       e.secret = secret
       return e
     })
-    inspect(commands,'commands')
+    logger.info('start spawning all commands', {
+      role: 'dispatch',
+      section: 'spawnAll',
+      commands: commands
+    })
     spawnAll(commands, function (err, reply) {
       if (err) {
         logger.error('error spawning all commands', {
