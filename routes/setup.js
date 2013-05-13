@@ -10,6 +10,7 @@ var deploy = require('./deploy')
 var commands = require('../lib/commands')
 var addCommand = require('./addCommand')
 var spawn = require('./spawn')
+var spawnAll = require('./spawnAll')
 var ensureAuthenticated = require('../lib/ensureAuthenticated')
 var rk = require('required-keys');
 var should = require('should');
@@ -61,4 +62,5 @@ module.exports = function (data) {
 
   // spawn
   app.post('/spawn/:id', authWare, spawn)
+  app.post('/spawnall', authWare, spawnAll)
 }
