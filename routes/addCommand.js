@@ -7,7 +7,7 @@ var config = require('nconf')
 var db = require('cradle-nconf')(config)
 var logger = require('loggly-console-logger')
 var getRepoNames = require('../lib/getRepoNames')
-var getJSON = require('../lib/getJSON')
+var getPS = require('fleet-get-ps')
 var performAdd = require('dispatch-add-command')
 module.exports = function (req, res) {
   var fleetConfig = config.get('fleet')
@@ -19,7 +19,7 @@ module.exports = function (req, res) {
     port: port,
     secret: secret
   }
-  getJSON(data, function (err, json) {
+  getPS(data, function (err, json) {
     if (err) {
       logger.error('error adding new command, failed to get drone names from fleet ps json', {
         role: 'dispatch',

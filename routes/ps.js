@@ -1,5 +1,5 @@
 var inspect = require('eyespect').inspector();
-var getJSON = require('../lib/getJSON')
+var getPS = require('fleet-get-ps')
 var logger = require('loggly-console-logger')
 var config = require('nconf')
 module.exports = function (req, res) {
@@ -12,13 +12,13 @@ module.exports = function (req, res) {
     host: host,
     secret: secret
   }
-  getJSON(data, function (err, reply) {
+  getPS(data, function (err, reply) {
     if (err) {
       req.session.error = 'Error getting ps data from fleet'
       logger.error('error getting json ps data from fleet', {
         error: err,
         role: 'dispatch',
-        section: 'getJSON'
+        section: 'ps'
       })
       return res.redirect('/')
     }

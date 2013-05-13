@@ -39,7 +39,8 @@
     "dispatch-clone": "~1.0.1",
     "dispatch-spawn": "~1.0.2",
     "dispatch-add-command": "~1.0.1",
-    "spinup-rebuild": "~1.0.0"
+    "spinup-rebuild": "~1.0.0",
+    "fleet-get-ps": "~1.0.1"
   },
   "devDependencies": {
     "eyespect": "~0.1.8",
