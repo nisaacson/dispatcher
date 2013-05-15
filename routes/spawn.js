@@ -4,6 +4,7 @@ var config = require('nconf')
 var db = require('cradle-nconf')(config)
 var performUpdateRepo = require('../lib/performUpdateRepo')
 var deployRepo = require('../lib/performDeploy')
+var shouldSpawn = require('dispatch-should-spawn')
 var performSpawn = require('dispatch-spawn')
 var logger = require('loggly-console-logger')
 module.exports = function (req, res) {
@@ -37,65 +38,78 @@ module.exports = function (req, res) {
       command: spawnCommand.command,
       drone: spawnCommand.drone,
       repoDir: repoDir
-
     }
-    performUpdateRepo(repo, function (err, reply) {
-      if (err) {
-        req.session.error = 'Failed to deploy repo, error when updating repo from origin: ' + JSON.stringify(err, null, ' ')
 
-        return res.redirect('/repos')
+    spawnCommand.host = fleetConfig.host
+    spawnCommand.port = fleetConfig.port
+    spawnCommand.secret = fleetConfig.secret
+    shouldSpawn(spawnCommand, function (err, reply) {
+      if (err) {
+        req.session.error = 'Failed to check if command should be spawned: ' + JSON.stringify(err, null, ' ')
+        return res.redirect('/commands')
       }
-      logger.info('deploy repo begin', {
-        role: 'dispatch',
-        section: 'spawn',
-        repo: repo
-      })
-      deployRepo(repo, function (err, reply) {
+      if (!reply) {
+        req.session.error = 'Spawn failed. Command is already running the allotted number of instances'
+        return res.redirect('/commands')
+      }
+      performUpdateRepo(repo, function (err, reply) {
         if (err) {
-          logger.error('failed to deploy repo', {
-            error: err,
-            section: 'deployRepo'
-          })
-          delete err.stack
-          req.session.error = 'Error deploying repo: ' + JSON.stringify(err, null, ' ')
-          return res.redirect('/commands')
+          req.session.error = 'Failed to deploy repo, error when updating repo from origin: ' + JSON.stringify(err, null, ' ')
+
+          return res.redirect('/repos')
         }
-        logger.info('deploy repo completed correctly', {
+        logger.info('deploy repo begin', {
           role: 'dispatch',
           section: 'spawn',
           repo: repo
         })
-
-        logger.info('spawn fleet process begin', {
-          role: 'dispatch',
-          section: 'spawn',
-          repo: repo,
-          command: spawnCommand.command
-        })
-
-        performSpawn(data, function (err, reply) {
+        deployRepo(repo, function (err, reply) {
           if (err) {
-            logger.error('spawn command failed', {
+            logger.error('failed to deploy repo', {
+              error: err,
+              section: 'deployRepo'
+            })
+            delete err.stack
+            req.session.error = 'Error deploying repo: ' + JSON.stringify(err, null, ' ')
+            return res.redirect('/commands')
+          }
+          logger.info('deploy repo completed correctly', {
+            role: 'dispatch',
+            section: 'spawn',
+            repo: repo
+          })
+
+          logger.info('spawn fleet process begin', {
+            role: 'dispatch',
+            section: 'spawn',
+            repo: repo,
+            command: spawnCommand.command
+          })
+
+          performSpawn(data, function (err, reply) {
+            if (err) {
+              logger.error('spawn command failed', {
+                role: 'dispatch',
+                section: 'spawn',
+                error: err,
+                commandID: id,
+                spawnCommand: spawnCommand
+              })
+              delete err.stack
+              req.session.error = 'Error performing spawn: ' + JSON.stringify(err, null, ' ')
+              return res.redirect('commands')
+            }
+            logger.info('spawn command completed correctly', {
               role: 'dispatch',
               section: 'spawn',
               error: err,
               commandID: id,
               spawnCommand: spawnCommand
             })
-            delete err.stack
-            req.session.error = 'Error performing spawn: ' + JSON.stringify(err, null, ' ')
-            return res.redirect('commands')
-          }
-          logger.info('spawn command completed correctly', {
-            role: 'dispatch',
-            section: 'spawn',
-            error: err,
-            commandID: id,
-            spawnCommand: spawnCommand
-          })
 
-          req.session.success = 'Spawned command correctly. Response: ' + reply
-          res.redirect('/commands')
+            req.session.success = 'Spawned command correctly. Response: ' + reply
+            res.redirect('/commands')
+          })
         })
       })
     })
