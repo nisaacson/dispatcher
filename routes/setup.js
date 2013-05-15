@@ -62,6 +62,6 @@ module.exports = function (data) {
 
   // spawn
   app.post('/spawn/:id', authWare, spawn)
-  app.post('/spawnall', authWare, spawnAll)
-  app.get('/spawnall', authWare, spawnAll)
+  app.post('/spawnall', spawnAll)
+  app.get('/spawnall', spawnAll)
 }
