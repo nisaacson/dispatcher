@@ -45,10 +45,36 @@ module.exports = function (req, res) {
 
         return res.redirect('/repos')
       }
+      logger.info('deploy repo begin', {
+        role: 'dispatch',
+        section: 'spawn',
+        repo: repo
+      })
       deployRepo(repo, function (err, reply) {
+        if (err) {
+          logger.error('failed to deploy repo', {
+            error: err,
+            section: 'deployRepo'
+          })
+          delete err.stack
+          req.session.error = 'Error deploying repo: ' + JSON.stringify(err, null, ' ')
+          return res.redirect('/commands')
+        }
+        logger.info('deploy repo completed correctly', {
+          role: 'dispatch',
+          section: 'spawn',
+          repo: repo
+        })
+
+        logger.info('spawn fleet process begin', {
+          role: 'dispatch',
+          section: 'spawn',
+          repo: repo,
+          command: spawnCommand.command
+        })
+
         performSpawn(data, function (err, reply) {
           if (err) {
-            delete err.stack
             logger.error('spawn command failed', {
               role: 'dispatch',
               section: 'spawn',
@@ -56,6 +82,7 @@ module.exports = function (req, res) {
               commandID: id,
               spawnCommand: spawnCommand
             })
+            delete err.stack
             req.session.error = 'Error performing spawn: ' + JSON.stringify(err, null, ' ')
             return res.redirect('commands')
           }
