@@ -1,3 +1,4 @@
+var path = require('path')
 var inspect = require('eyespect').inspector();
 var getPS = require('fleet-get-ps')
 var config = require('nconf')
@@ -19,7 +20,9 @@ module.exports = function (req, res) {
     include_docs: true
   }
   db.view('spawn_command/all', opts, function (err, reply) {
+    var repoContainerDir = path.join(__dirname,'../repos')
     var commands = reply.map(function (e) {
+      e.repoDir = path.join(repoContainerDir, e.repo)
       e.host = host
       e.port = port
       e.secret = secret
